@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DataReward – Free Mobile Data</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --primary: #0057FF;
+    --primary-dark: #003FCC;
+    --primary-light: #EBF1FF;
+    --accent: #00C6FF;
+    --success: #00C47D;
+    --warn: #FF6B35;
+    --surface: #FFFFFF;
+    --surface2: #F4F7FF;
+    --text: #0D1B3E;
+    --text-muted: #6B7A99;
+    --border: #DCE4F5;
+    --radius: 18px;
+    --radius-sm: 10px;
+    --shadow: 0 4px 24px rgba(0,87,255,.10);
+    --shadow-lg: 0 12px 48px rgba(0,87,255,.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface2);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--accent) 100%);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,87,255,.25);
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo .logo-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(255,255,255,.2);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .topbar-logo .logo-icon svg { width: 20px; height: 20px; fill: #fff; }
+  .topbar-logo span { font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.15rem; color: #fff; letter-spacing: -.3px; }
+  .topbar-tag { font-size: .72rem; color: rgba(255,255,255,.75); font-weight: 500; background: rgba(255,255,255,.15); border-radius: 20px; padding: 3px 10px; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--primary-dark) 0%, var(--primary) 50%, #2d8bff 100%);
+    padding: 36px 20px 56px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; padding: 5px 16px; font-size: .78rem; color: rgba(255,255,255,.9); font-weight: 600; letter-spacing: .4px; margin-bottom: 16px; }
+  .hero h1 { font-family: 'Sora', sans-serif; font-size: clamp(1.6rem, 6vw, 2.4rem); font-weight: 800; color: #fff; line-height: 1.2; margin-bottom: 10px; }
+  .hero h1 span { color: #7DDFFF; }
+  .hero p { color: rgba(255,255,255,.8); font-size: .95rem; max-width: 340px; margin: 0 auto 24px; line-height: 1.6; }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; color: var(--primary); border: none;
+    border-radius: 50px; padding: 14px 32px;
+    font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; box-shadow: 0 6px 24px rgba(0,0,0,.2);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,0,0,.25); }
+  .hero-cta svg { width: 18px; height: 18px; }
+
+  /* ── WAVE ── */
+  .wave { display: block; margin-top: -2px; }
+
+  /* ── MAIN WRAPPER ── */
+  .main { max-width: 520px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 22px;
+    margin-bottom: 18px;
+    animation: fadeUp .4s ease both;
+  }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: translateY(0); } }
+
+  /* ── BALANCE CARD ── */
+  .balance-card {
+    background: linear-gradient(135deg, var(--primary) 0%, #2d8bff 100%);
+    border: none; color: #fff; text-align: center; position: relative; overflow: hidden;
+  }
+  .balance-card::after {
+    content: ''; position: absolute; right: -30px; top: -30px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: rgba(255,255,255,.08);
+  }
+  .balance-card .user-greeting { font-size: .85rem; opacity: .85; margin-bottom: 4px; }
+  .balance-card .user-name { font-family: 'Sora', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; }
+  .balance-circle {
+    width: 110px; height: 110px; border-radius: 50%;
+    background: rgba(255,255,255,.15); border: 3px solid rgba(255,255,255,.3);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    margin: 0 auto 16px; backdrop-filter: blur(6px);
+  }
+  .balance-circle .bal-num { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
+  .balance-circle .bal-unit { font-size: .75rem; opacity: .8; font-weight: 600; }
+  .balance-label { font-size: .82rem; opacity: .75; margin-bottom: 14px; }
+  .balance-progress-wrap { background: rgba(255,255,255,.2); border-radius: 20px; height: 8px; overflow: hidden; }
+  .balance-progress-bar { height: 100%; background: #fff; border-radius: 20px; transition: width .5s ease; width: 0%; }
+  .balance-progress-text { font-size: .75rem; opacity: .8; margin-top: 6px; text-align: right; }
+
+  /* ── TASK CARD ── */
+  .card-title { font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .card-sub { font-size: .8rem; color: var(--text-muted); margin-bottom: 18px; }
+  .task-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+  .task-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; padding: 10px 6px;
+    background: var(--primary-light); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: all .2s; font-size: .68rem; font-weight: 600; color: var(--primary);
+    font-family: 'DM Sans', sans-serif; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .task-btn svg { width: 20px; height: 20px; fill: var(--primary); transition: fill .2s; }
+  .task-btn:hover:not(.done) { background: var(--primary); color: #fff; border-color: var(--primary); transform: scale(1.04); }
+  .task-btn:hover:not(.done) svg { fill: #fff; }
+  .task-btn.done { background: #E8FFF5; border-color: #00C47D; color: var(--success); cursor: default; }
+  .task-btn.done svg { fill: var(--success); }
+  .task-btn .task-reward { font-size: .62rem; color: var(--success); font-weight: 700; }
+  .task-btn.done .task-reward { color: var(--success); }
+
+  /* ── RELOAD BUTTON ── */
+  .reload-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff; border: none; border-radius: 50px;
+    font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700;
+    cursor: pointer; transition: all .3s;
+    box-shadow: 0 6px 20px rgba(0,87,255,.3);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .reload-btn:disabled {
+    background: #C8D4EE; color: #8A99BF; cursor: not-allowed;
+    box-shadow: none;
+  }
+  .reload-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,87,255,.4); }
+  .lock-hint { text-align: center; font-size: .78rem; color: var(--text-muted); margin-top: 10px; }
+  .lock-hint span { color: var(--primary); font-weight: 600; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(13,27,62,.55); backdrop-filter: blur(6px);
+    z-index: 999; display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-box {
+    background: #fff; border-radius: 24px; width: 100%; max-width: 400px;
+    padding: 32px 28px; box-shadow: 0 24px 64px rgba(0,87,255,.2);
+    animation: modalIn .35s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes modalIn { from { opacity:0; transform: scale(.88) translateY(20px); } to { opacity:1; transform: scale(1) translateY(0); } }
+  .modal-icon { width: 56px; height: 56px; border-radius: 16px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+  .modal-icon svg { width: 28px; height: 28px; fill: var(--primary); }
+  .modal-title { font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 800; margin-bottom: 4px; }
+  .modal-sub { font-size: .85rem; color: var(--text-muted); margin-bottom: 24px; line-height: 1.5; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: .8rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
+    background: var(--surface2); outline: none; transition: border-color .2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: var(--primary); background: #fff; }
+  .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7A99' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .form-submit {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff; border: none; border-radius: 50px;
+    font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all .2s; box-shadow: 0 4px 18px rgba(0,87,255,.3);
+    margin-top: 8px;
+  }
+  .form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,87,255,.4); }
+  .form-note { font-size: .73rem; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5; }
+
+  /* ── SHARE SCREEN ── */
+  .congrats-screen { display: none; }
+  .congrats-screen.active { display: block; animation: fadeUp .5s ease both; }
+  .congrats-hero {
+    background: linear-gradient(135deg, #00c47d, #00a86b);
+    border-radius: var(--radius); padding: 32px 22px; text-align: center;
+    color: #fff; margin-bottom: 18px;
+  }
+  .congrats-hero .c-icon { font-size: 3rem; margin-bottom: 12px; }
+  .congrats-hero h2 { font-family: 'Sora', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+  .congrats-hero p { font-size: .88rem; opacity: .9; line-height: 1.6; }
+  .share-progress-wrap { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 18px; }
+  .share-progress-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .share-progress-label span:first-child { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; }
+  .share-progress-label .pct { font-size: 1.1rem; font-weight: 800; color: var(--primary); font-family: 'Sora', sans-serif; }
+  .share-bar-track { background: var(--border); border-radius: 20px; height: 12px; overflow: hidden; }
+  .share-bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .6s cubic-bezier(.34,1.1,.64,1); width: 0%; }
+  .share-steps { display: flex; justify-content: space-between; margin-top: 8px; }
+  .share-step { font-size: .68rem; color: var(--text-muted); }
+  .share-btn {
+    width: 100%; padding: 15px;
+    background: #25D366; color: #fff; border: none; border-radius: 50px;
+    font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(37,211,102,.35);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-bottom: 12px;
+  }
+  .share-btn:hover { background: #1db956; transform: translateY(-2px); }
+  .share-btn svg { width: 20px; height: 20px; fill: #fff; }
+  .claim-btn {
+    width: 100%; padding: 15px;
+    background: linear-gradient(135deg, #f7a800, #ff6b35);
+    color: #fff; border: none; border-radius: 50px;
+    font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all .2s; box-shadow: 0 6px 20px rgba(247,168,0,.35);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .claim-btn:disabled { background: #C8D4EE; color: #8A99BF; cursor: not-allowed; box-shadow: none; }
+  .claim-btn:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(247,168,0,.45); }
+  .share-hint { text-align: center; font-size: .78rem; color: var(--text-muted); margin-top: 10px; }
+  .share-hint span { color: var(--warn); font-weight: 600; }
+
+  /* ── SUCCESS SCREEN ── */
+  .success-screen { display: none; position: fixed; inset: 0; z-index: 500; background: var(--surface2); overflow-y: auto; }
+  .success-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px 80px; }
+  .success-inner { max-width: 420px; width: 100%; text-align: center; }
+  .success-anim { font-size: 5rem; margin-bottom: 8px; animation: pop 0.5s cubic-bezier(.34,1.7,.64,1) both; }
+  @keyframes pop { from { transform: scale(0); opacity:0; } to { transform: scale(1); opacity:1; } }
+  .success-title { font-family: 'Sora', sans-serif; font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+  .success-msg { font-size: .92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+  .success-receipt {
+    background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 24px; text-align: left; margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .receipt-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .receipt-row:last-child { border-bottom: none; }
+  .receipt-label { font-size: .8rem; color: var(--text-muted); }
+  .receipt-val { font-weight: 700; font-size: .9rem; color: var(--text); }
+  .receipt-val.green { color: var(--success); }
+  .receipt-badge {
+    background: linear-gradient(135deg, #e8fff5, #d0ffed);
+    border: 1.5px solid #00c47d; border-radius: 50px; padding: 4px 14px;
+    font-size: .75rem; font-weight: 700; color: var(--success);
+  }
+  #canvas-confetti { position: fixed; inset: 0; pointer-events: none; z-index: 600; }
+
+  /* ── TRUST BAR ── */
+  .trust-bar { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
+  .trust-item { display: flex; align-items: center; gap: 6px; font-size: .75rem; color: var(--text-muted); font-weight: 500; }
+  .trust-item svg { width: 14px; height: 14px; fill: var(--success); }
+
+  /* ── FOOTER ── */
+  .footer { text-align: center; font-size: .72rem; color: var(--text-muted); padding: 20px; line-height: 1.7; }
+
+  /* ── HIDDEN / UTILS ── */
+  .hidden { display: none !important; }
+  .mt4 { margin-top: 4px; }
+  .mt8 { margin-top: 8px; }
+
+  @media (max-width: 360px) {
+    .task-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+    </div>
+    <span>DataReward LK</span>
+  </div>
+  <span class="topbar-tag">🇱🇰 Sri Lanka</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🎁 Limited Time Offer – Free Data</div>
+  <h1>Earn <span>1 GB Free</span><br/>Mobile Data Today</h1>
+  <p>Complete simple tasks and get rewarded with free mobile data on your Dialog, Airtel, Mobitel, or Hutch SIM.</p>
+  <button class="hero-cta" onclick="openModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    Claim Your 1 GB Now
+  </button>
+</div>
+
+<svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 48" preserveAspectRatio="none" style="width:100%;display:block;margin-top:-1px;"><path fill="#F4F7FF" d="M0,32L80,26.7C160,21,320,11,480,10.7C640,11,800,21,960,24C1120,27,1280,21,1360,18.7L1440,16L1440,48L1360,48C1280,48,1120,48,960,48C800,48,640,48,480,48C320,48,160,48,80,48L0,48Z"/></svg>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TRUST BAR -->
+  <div class="trust-bar" style="margin-top:8px;">
+    <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Secure & Verified</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> All Networks</div>
+    <div class="trust-item"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 100% Free</div>
+  </div>
+
+  <!-- DASHBOARD (hidden until registered) -->
+  <div id="dashboard" class="hidden">
+
+    <!-- Balance Card -->
+    <div class="card balance-card">
+      <div class="user-greeting">Welcome back,</div>
+      <div class="user-name" id="dash-name">User</div>
+      <div class="balance-circle">
+        <span class="bal-num" id="bal-num">0</span>
+        <span class="bal-unit">MB</span>
+      </div>
+      <div class="balance-label">Data Balance Earned</div>
+      <div class="balance-progress-wrap">
+        <div class="balance-progress-bar" id="bal-bar"></div>
+      </div>
+      <div class="balance-progress-text" id="bal-bar-text">0 / 1000 MB</div>
+    </div>
+
+    <!-- Task Section -->
+    <div class="card" id="task-card">
+      <div class="card-title">📺 Watch Ads & Earn Data</div>
+      <div class="card-sub">Each ad = +50 MB &nbsp;•&nbsp; Watch all 20 to unlock 1 GB</div>
+      <div class="task-grid" id="task-grid"></div>
+    </div>
+
+    <!-- Reload Button -->
+    <div class="card" style="text-align:center;">
+      <button class="reload-btn" id="reload-btn" disabled onclick="goToShare()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-4"/></svg>
+        Reload Now – 1 GB Free
+      </button>
+      <div class="lock-hint" id="lock-hint">Complete all <span>20 tasks</span> to unlock the reload button</div>
+    </div>
+  </div>
+
+  <!-- SHARE SCREEN -->
+  <div class="congrats-screen" id="congrats-screen">
+    <div class="congrats-hero">
+      <div class="c-icon">🎊</div>
+      <h2>Congratulations!</h2>
+      <p>You've completed all tasks! Share this offer with 10 friends on WhatsApp to activate your free 1 GB data.</p>
+    </div>
+
+    <div class="share-progress-wrap">
+      <div class="share-progress-label">
+        <span>Sharing Progress</span>
+        <span class="pct" id="share-pct">0%</span>
+      </div>
+      <div class="share-bar-track">
+        <div class="share-bar-fill" id="share-bar"></div>
+      </div>
+      <div class="share-steps">
+        <span class="share-step">0%</span>
+        <span class="share-step">25%</span>
+        <span class="share-step">50%</span>
+        <span class="share-step">75%</span>
+        <span class="share-step">100%</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0;">
+      <button class="share-btn" onclick="doShare()">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.122 1.532 5.858L.058 23.5l5.797-1.518A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.944 0-3.77-.502-5.357-1.381l-.382-.227-3.98 1.043 1.062-3.872-.249-.398A9.952 9.952 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+        Share on WhatsApp
+      </button>
+      <button class="claim-btn" id="claim-btn" disabled onclick="showSuccess()">
+        🏆 Final Claim – Get My 1 GB
+      </button>
+      <div class="share-hint">Share <span id="share-remaining">10</span> more times to unlock the claim button</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer" id="main-footer">
+  © 2025 DataReward LK &nbsp;•&nbsp; Powered by Sri Lanka Telecom Partners<br/>
+  Terms apply. Data credited within 24 hours. One offer per SIM.
+</div>
+
+<!-- SUCCESS SCREEN -->
+<div class="success-screen" id="success-screen">
+  <div class="success-inner">
+    <div class="success-anim">🎉</div>
+    <div class="success-title">You Did It!</div>
+    <div class="success-msg">Your 1 GB free data has been registered and will be credited to your number within 24 hours. Check your balance via <b>*#xxx#</b>.</div>
+    <div class="success-receipt">
+      <div class="receipt-row">
+        <span class="receipt-label">Name</span>
+        <span class="receipt-val" id="rc-name">—</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-label">Phone Number</span>
+        <span class="receipt-val" id="rc-phone">—</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-label">Network</span>
+        <span class="receipt-val" id="rc-sim">—</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-label">Data Package</span>
+        <span class="receipt-val green">1,000 MB (1 GB)</span>
+      </div>
+      <div class="receipt-row">
+        <span class="receipt-label">Status</span>
+        <span class="receipt-badge">✓ Approved</span>
+      </div>
+    </div>
+    <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;">
+      Thank you for participating in the DataReward LK loyalty program. Share this experience with friends!
+    </p>
+  </div>
+</div>
+
+<canvas id="canvas-confetti" style="display:none;"></canvas>
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modal">
+  <div class="modal-box">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </div>
+    <div class="modal-title">Create Your Account</div>
+    <div class="modal-sub">Register once to start earning free data. No payment required.</div>
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="inp-name" placeholder="e.g. Kamal Perera" />
+    </div>
+    <div class="form-group">
+      <label>SIM Network</label>
+      <select id="inp-sim">
+        <option value="">— Select Network —</option>
+        <option value="Dialog">Dialog</option>
+        <option value="Airtel">Airtel</option>
+        <option value="Mobitel">Mobitel</option>
+        <option value="Hutch">Hutch</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Phone Number</label>
+      <input type="tel" id="inp-phone" placeholder="+94 7X XXX XXXX" value="+94 " />
+    </div>
+    <button class="form-submit" onclick="register()">Start Earning Free Data →</button>
+    <div class="form-note">🔒 Your details are safe and used only for data delivery.</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var user = { name: '', phone: '', sim: '' };
+  var balance = 0;
+  var tasksDone = 0;
+  var shareCount = 0;
+  var MAX_TASKS = 20;
+  var MAX_SHARE = 10;
+  var MB_PER_TASK = 50;
+  var ADSTERRA_LINK = 'https://www.profitablecpmrate.com/r8q1nrz6q?key=YOUR_ADSTERRA_KEY'; // Replace with your Adsterra direct link
+
+  // -- MODAL --
+  window.openModal = function() {
+    document.getElementById('modal').classList.remove('hidden');
+  };
+
+  window.register = function() {
+    var name = document.getElementById('inp-name').value.trim();
+    var sim  = document.getElementById('inp-sim').value;
+    var phone= document.getElementById('inp-phone').value.trim();
+    if (!name) { alert('Please enter your full name.'); return; }
+    if (!sim)  { alert('Please select your SIM network.'); return; }
+    if (!phone || phone.length < 10) { alert('Please enter a valid phone number.'); return; }
+    user = { name: name, sim: sim, phone: phone };
+    document.getElementById('modal').classList.add('hidden');
+    showDashboard();
+  };
+
+  function showDashboard() {
+    document.querySelector('.hero').style.display = 'none';
+    document.querySelector('.wave').style.display = 'none';
+    document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('dash-name').textContent = user.name.split(' ')[0];
+    buildTaskGrid();
+  }
+
+  // -- TASK GRID --
+  function buildTaskGrid() {
+    var grid = document.getElementById('task-grid');
+    grid.innerHTML = '';
+    for (var i = 1; i <= MAX_TASKS; i++) {
+      (function(idx) {
+        var btn = document.createElement('button');
+        btn.className = 'task-btn';
+        btn.id = 'task-' + idx;
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><span>Ad #' + idx + '</span><span class="task-reward">+50 MB</span>';
+        btn.onclick = function() { watchAd(idx, btn); };
+        grid.appendChild(btn);
+      })(i);
+    }
+  }
+
+  window.watchAd = function(idx, btn) {
+    if (btn.classList.contains('done')) return;
+    window.open(ADSTERRA_LINK, '_blank');
+    setTimeout(function() {
+      btn.classList.add('done');
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg><span>Done</span><span class="task-reward">+50 MB</span>';
+      btn.onclick = null;
+      balance += MB_PER_TASK;
+      tasksDone++;
+      updateBalance();
+      if (tasksDone >= MAX_TASKS) {
+        document.getElementById('reload-btn').disabled = false;
+        document.getElementById('lock-hint').innerHTML = '🎉 All tasks complete! Click below to reload.';
+      }
+    }, 1500);
+  };
+
+  function updateBalance() {
+    document.getElementById('bal-num').textContent = balance;
+    var pct = Math.min((balance / 1000) * 100, 100);
+    document.getElementById('bal-bar').style.width = pct + '%';
+    document.getElementById('bal-bar-text').textContent = balance + ' / 1000 MB';
+  }
+
+  // -- SHARE SCREEN --
+  window.goToShare = function() {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('main-footer').style.display = 'none';
+    var cs = document.getElementById('congrats-screen');
+    cs.classList.add('active');
+  };
+
+  window.doShare = function() {
+    if (shareCount >= MAX_SHARE) return;
+    var msg = encodeURIComponent('🎉 I just earned 1 GB FREE mobile data from DataReward LK! You can too — complete 20 quick tasks and get your free data on Dialog, Airtel, Mobitel or Hutch. 👉 [YOUR LINK HERE]');
+    window.open('https://api.whatsapp.com/send?text=' + msg, '_blank');
+    shareCount++;
+    var pct = Math.round((shareCount / MAX_SHARE) * 100);
+    document.getElementById('share-pct').textContent = pct + '%';
+    document.getElementById('share-bar').style.width = pct + '%';
+    var rem = MAX_SHARE - shareCount;
+    if (rem > 0) {
+      document.getElementById('share-remaining').textContent = rem;
+    } else {
+      document.getElementById('claim-btn').disabled = false;
+      document.querySelector('.share-hint').innerHTML = '✅ <span style="color:var(--success)">All done! Click the claim button above.</span>';
+    }
+  };
+
+  // -- SUCCESS SCREEN --
+  window.showSuccess = function() {
+    document.getElementById('congrats-screen').classList.remove('active');
+    document.getElementById('main-footer').style.display = 'none';
+    var ss = document.getElementById('success-screen');
+    ss.classList.add('active');
+    document.getElementById('rc-name').textContent = user.name;
+    document.getElementById('rc-phone').textContent = user.phone;
+    document.getElementById('rc-sim').textContent = user.sim;
+    startConfetti();
+  };
+
+  // -- CONFETTI --
+  function startConfetti() {
+    var canvas = document.getElementById('canvas-confetti');
+    canvas.style.display = 'block';
+    var ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var pieces = [];
+    var colors = ['#0057FF','#00C6FF','#FFD700','#FF6B35','#00C47D','#FF4081','#7C4DFF'];
+    for (var i = 0; i < 160; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        w: Math.random() * 10 + 4,
+        h: Math.random() * 6 + 3,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rot: Math.random() * 360,
+        vx: (Math.random() - 0.5) * 3,
+        vy: Math.random() * 4 + 2,
+        vr: (Math.random() - 0.5) * 8
+      });
+    }
+    var frame = 0;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pieces.forEach(function(p) {
+        ctx.save();
+        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rot += p.vr;
+        if (p.y > canvas.height) { p.y = -20; p.x = Math.random() * canvas.width; }
+      });
+      frame++;
+      if (frame < 300) requestAnimationFrame(draw);
+      else { ctx.clearRect(0, 0, canvas.width, canvas.height); canvas.style.display = 'none'; }
+    }
+    draw();
+    // firework bursts
+    for (var b = 0; b < 5; b++) {
+      (function(delay) {
+        setTimeout(function() { firework(canvas, ctx); }, delay);
+      })(b * 500);
+    }
+  }
+
+  function firework(canvas, ctx) {
+    var x = Math.random() * canvas.width;
+    var y = Math.random() * canvas.height * 0.5;
+    var particles = [];
+    var colors = ['#FFD700','#FF6B35','#00C6FF','#FF4081','#00C47D'];
+    for (var i = 0; i < 40; i++) {
+      var angle = (i / 40) * Math.PI * 2;
+      var speed = Math.random() * 4 + 2;
+      particles.push({ x: x, y: y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, alpha: 1, color: colors[Math.floor(Math.random() * colors.length)] });
+    }
+    function animFW() {
+      particles.forEach(function(p) {
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.alpha -= 0.025;
+      });
+      if (particles[0].alpha > 0) requestAnimationFrame(animFW);
+    }
+    animFW();
+  }
+
+  // Auto-open modal on load
+  setTimeout(openModal, 600);
+})();
+</script>
+</body>
+</html>
